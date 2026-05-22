@@ -15,6 +15,39 @@ void mengecheckAntrian() {
 
     file.close();
 }
+
+void tampilAntrian(Node* awal) {
+
+    if (awal == nullptr) {
+        cout << "\n[!] Antrian kosong!" << endl;
+        return;
+    }
+
+    Node* temp = awal;
+    int no = 1;
+
+    cout << "\n======================================================" << endl;
+    cout << "                 DAFTAR ANTRIAN" << endl;
+    cout << "======================================================" << endl;
+    cout << "NO\tTIKET\tNAMA\t\tSTATUS" << endl;
+    cout << "------------------------------------------------------" << endl;
+
+    while (temp != nullptr) {
+
+        cout << no << "\t"
+             << temp->info.noTiket << "\t"
+             << temp->info.nama << "\t\t"
+             << (temp->info.sudahDilayani ? "SUDAH" : "BELUM")
+             << endl;
+
+        temp = temp->next;
+        no++;
+    }
+
+    cout << "======================================================" << endl;
+}
+
+
 using namespace std;
 int main() {
     Node* awal = nullptr;
