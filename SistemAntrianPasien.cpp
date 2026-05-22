@@ -66,6 +66,78 @@ void tampilAntrian(Node* awal) {
     cout << "======================================================" << endl;
 }
 
+void cariPasienDiFile(string tiketDicari) {
+
+    ifstream file("DataPasien.txt");
+
+    if (!file.is_open()) {
+        cout << "\n[!] Database gagal dibuka atau belum ada data!" << endl;
+        return;
+    }
+
+    string line;
+    bool ketemu = false;
+
+    cout << "\n====================================" << endl;
+    cout << "        HASIL PENCARIAN PASIEN" << endl;
+    cout << "====================================" << endl;
+
+    while (getline(file, line)) {
+
+        if (line.empty()) continue;
+
+        string tiket = "", nama = "", telp = "", keluhan = "";
+        string usia = "", jk = "", status = "", tgl = "";
+
+        int kolom = 0;
+
+        for (int i = 0; i < line.length(); i++) {
+
+            if (line[i] == '#') {
+                kolom++;
+                continue;
+            }
+
+            if (kolom == 0) tiket += line[i];
+            else if (kolom == 1) nama += line[i];
+            else if (kolom == 2) telp += line[i];
+            else if (kolom == 3) keluhan += line[i];
+            else if (kolom == 4) usia += line[i];
+            else if (kolom == 5) jk += line[i];
+            else if (kolom == 6) status += line[i];
+            else if (kolom == 7) tgl += line[i];
+        }
+
+        if (tiket == tiketDicari) {
+
+            cout << "No Tiket       : " << tiket << endl;
+            cout << "Nama Pasien    : " << nama << endl;
+            cout << "No Telepon     : " << telp << endl;
+            cout << "Keluhan        : " << keluhan << endl;
+            cout << "Usia           : " << usia << " Tahun" << endl;
+            cout << "Jenis Kelamin  : "
+                 << (jk == "L" ? "Laki-laki" : "Perempuan") << endl;
+
+            cout << "Status         : "
+                 << (status == "1" ? "SUDAH DILAYANI" : "BELUM DILAYANI")
+                 << endl;
+
+            cout << "Tgl Kunjungan  : " << tgl << endl;
+            cout << "------------------------------------" << endl;
+
+            ketemu = true;
+            break;
+        }
+    }
+
+    file.close();
+
+    if (!ketemu) {
+        cout << "\n[!] Pasien dengan tiket "
+             << tiketDicari
+             << " tidak ditemukan!" << endl;
+    }
+}
 
 using namespace std;
 int main() {
