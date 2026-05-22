@@ -2,6 +2,19 @@
 #include <fstream>
 #include <string>
 
+
+void mengecheckAntrian() {
+    ifstream file("DataPasien.txt");
+    string line;
+
+    while (getline(file, line)) {
+        if (!line.empty()) {
+            nomorAntrian++;
+        }
+    }
+
+    file.close();
+}
 using namespace std;
 int main() {
     Node* awal = nullptr;
