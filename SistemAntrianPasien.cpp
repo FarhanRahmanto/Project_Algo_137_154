@@ -3,94 +3,82 @@
 #include <string>
 
 using namespace std;
-
-
 int main() {
-	NodeLapangan* rootUtama = NULL;
-	
-	int pilihMenu;
-	string namaInput, olahragaInput,namaLapangan,namaTim;
-	
-	do{
-		cout<<"\n ==== Menu Manajemen Sport Center ==="<<endl;
-		cout<<"1. Tambah Lapangan" <<endl;
-		cout<<"2. Melihat Lapangan"<<endl;
-		cout<<"3. Catat Penyewaan Lapangan"<<endl;
-		cout<<"4. Catat Selesai Penggunaan"<<endl;
-		cout<<"5. Hapus Lapangan"<<endl;
-		cout<<"6. Undo Aksi Terakhir"<<endl;
-		cout<<"7. Tampilkan Antrian"<<endl;
-		cout<<"0. Program selesai"<<endl;
-		cout<<"Pilih Menu: ";
-		cin>>pilihMenu;
-		cin.ignore();
-		
-		if(pilihMenu == 1 ) {
-			cout<<"[ Tambah Lapangan ]"<<endl; 
-			cout<<"Input Nama lapangan : ";
-			getline(cin,namaInput);
-			
-			cout<<"Input Jenis Olahraga : ";
-			getline(cin,olahragaInput);
-			
-			rootUtama = tambahLapangan(rootUtama,namaInput,olahragaInput);
-			}
-			
-		if(pilihMenu == 2){
-			if(rootUtama == NULL){
-				cout<<"Belum ada data lapangan"<<endl;
-				}
-			else {
-				tampilkanLapangan(rootUtama);
-				}
-			}
-			
-		if(pilihMenu == 3){
-			cout<<"[ SEWA LAPANGAN ]"<<endl;
-			
-			cout<<"Masukan Nama Lapangan : ";
-			getline(cin,namaLapangan);
-			cout<<"Masukan Nama Tim Anda : ";
-			getline(cin,namaTim);
-			
-			sewaLapangan(rootUtama,namaLapangan,namaTim);
-			
-			}
-			
-		if(pilihMenu == 4){
-			cout<<"[ SELESAI LAPANGAN ]"<<endl;
-			cout<<"Masukan nama lapangan : ";
-			getline(cin,namaLapangan);
-			
-			selesaiLapangan(rootUtama, namaLapangan);
-			}
-			
-		if(pilihMenu == 5) {
-			cout<<"[ MENGHAPUS LAPANGAN ]"<<endl;
-			cout<<"Masukan nama lapangan : ";
-			getline(cin,namaLapangan);
-			
-			rootUtama = hapusLapangan(rootUtama,namaLapangan);
-			}
-			
-		if(pilihMenu == 6){
-			cout<<"[ UNDO AKTIVITAS ]"<<endl;
-			undoAksi(rootUtama);
-			}
-			
-		if(pilihMenu == 7){
-			cout<<"[ TAMPILKAN ANTRIAN LAPANGAN ]"<<endl;
-			cout<<"Masukan Nama Lapangan yang Ingin Dilihat: ";
-			getline(cin, namaLapangan);
-			
-			tampilkanAntrian(rootUtama,namaLapangan);
-			}
-		
-		if(pilihMenu == 0){
-			cout<<"Terima Kasih! Keluar dari sistem Sport Center "<<endl;
-			}
-		}while(pilihMenu >= 1 && pilihMenu <=7);
-	
-	
-	}
+    Node* awal = nullptr;
+    Node* akhir = nullptr;
+    string cariTiket;
+    int pilih;
 
+   
+    loadAntrianDariFile(&awal, &akhir);
+
+    do {
+        cout << "\n====================================" << endl;
+        cout << "      SISTEM KLINIK SEDERHANA" << endl;
+        cout << "====================================" << endl;
+        cout << "1. Tambah Pasien" << endl;
+        cout << "2. Lihat Antrian" << endl;
+        cout << "3. Layani Pasien" << endl;
+        cout << "4. Riwayat Pasien" << endl;
+        cout << "5. Cari Pasien" << endl;
+        cout << "6. Hapus Riwayat" << endl;
+        cout << "0. Keluar" << endl;
+        cout << "====================================" << endl;
+        cout << "Pilih Menu : ";
+        cin >> pilih;
+        cin.ignore(); // BERSIHKAN BUFFER setelah input integer menu
+
+        if (pilih == 1) {
+            Pasien p;
+            cout << "\n====================================" << endl;
+            cout << "          TAMBAH PASIEN" << endl;
+            cout << "====================================" << endl;
+            cout << "Nama Pasien      : "; getline(cin, p.nama);
+
+            p.noTiket = "A" + to_string(nomorAntrian);
+            nomorAntrian++;
+            cout << "No Tiket         : " << p.noTiket << endl;
+
+            cout << "Nomor Telepon    : "; getline(cin, p.nomorTelepon);
+            cout << "Keluhan          : "; getline(cin, p.keluhan);
+            cout << "Usia             : "; cin >> p.usia;
+            cout << "Jenis Kelamin    : "; cin >> p.jenisKelamin;
+            cout << "Tanggal (t b th) : "; cin >> p.tglKunjungan.tgl >> p.tglKunjungan.bln >> p.tglKunjungan.thn;
+            
+            cin.ignore();
+
+            p.sudahDilayani = false;
+            tambahPasien(&awal, &akhir, p);
+            simpanData(p);
+            cout << "\n[+] Data pasien " << p.nama << " berhasil disimpan!" << endl;
+        }
+        else if (pilih == 2) {
+            tampilAntrian(awal);
+        }
+        else if (pilih == 3) {
+            layaniPasien(awal, akhir);
+        }
+        else if (pilih == 4) {
+            tampilRiwayat();
+        }
+        else if (pilih == 5) {
+            cout << "Nomor tiket : "; cin >> cariTiket;
+            cin.ignore();
+            cariPasienDiFile(cariTiket);
+        }
+        else if (pilih == 6) {
+            hapusRiwayat();
+        }
+
+    } while (pilih != 0);
+
+    
+    Node* temp = awal;
+    while (temp != nullptr) {
+        Node* berikutnya = temp->next;
+        delete temp;
+        temp = berikutnya;
+    }
+
+    return 0;
+}
