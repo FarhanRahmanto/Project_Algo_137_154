@@ -66,6 +66,165 @@ void tampilAntrian(Node* awal) {
     cout << "======================================================" << endl;
 }
 
+void layaniPasien(Node*& awal, Node*& akhir) {
+
+    if (awal == nullptr) {
+        cout << "\n[!] Antrian kosong!" << endl;
+        return;
+    }
+
+    Node* hapus = awal;
+
+    hapus->info.sudahDilayani = true;
+
+    cout << "\n[+] Pasien "
+         << hapus->info.nama
+         << " sudah dilayani!" << endl;
+
+    awal = awal->next;
+
+    if (awal != nullptr) {
+        awal->prev = nullptr;
+    }
+    else {
+        akhir = nullptr;
+    }
+
+    delete hapus;
+}
+
+void tampilRiwayat() {
+
+    ifstream file("DataPasien.txt");
+
+    if (!file.is_open()) {
+        cout << "\n[!] File tidak bisa dibuka!" << endl;
+        return;
+    }
+
+    Pasien daftarPasien[100];
+    string tglTeks[100];
+    long nilaiTanggal[100];
+
+    int jumlahPasien = 0;
+
+    string line;
+
+    while (getline(file, line)) {
+
+        if (line.empty()) continue;
+
+        string tiket = "", nama = "", telp = "", keluhan = "";
+        string usiaStr = "", jk = "", statusStr = "", tglStr = "";
+
+        int kolom = 0;
+
+        for (size_t i = 0; i < line.length(); i++) {
+
+            if (line[i] == '#') {
+                kolom++;
+                continue;
+            }
+
+            if (kolom == 0) tiket += line[i];
+            else if (kolom == 1) nama += line[i];
+            else if (kolom == 2) telp += line[i];
+            else if (kolom == 3) keluhan += line[i];
+            else if (kolom == 4) usiaStr += line[i];
+            else if (kolom == 5) jk += line[i];
+            else if (kolom == 6) statusStr += line[i];
+            else if (kolom == 7) tglStr += line[i];
+        }
+
+        daftarPasien[jumlahPasien].noTiket = tiket;
+        daftarPasien[jumlahPasien].nama = nama;
+        daftarPasien[jumlahPasien].nomorTelepon = telp;
+        daftarPasien[jumlahPasien].keluhan = keluhan;
+
+        daftarPasien[jumlahPasien].usia =
+            (usiaStr.empty()) ? 0 : stoi(usiaStr);
+
+        daftarPasien[jumlahPasien].jenisKelamin =
+            (jk.empty()) ? '-' : jk[0];
+
+        daftarPasien[jumlahPasien].sudahDilayani =
+            (statusStr == "1");
+
+        tglTeks[jumlahPasien] = tglStr;
+
+        long angkaSorting = 0;
+
+        size_t pos1 = tglStr.find('-');
+        size_t pos2 = tglStr.find('-', pos1 + 1);
+
+        if (pos1 != string::npos && pos2 != string::npos) {
+
+            int tgl = stoi(tglStr.substr(0, pos1));
+
+            int bln = stoi(
+                tglStr.substr(pos1 + 1, pos2 - pos1 - 1)
+            );
+
+            int thn = stoi(tglStr.substr(pos2 + 1));
+
+            angkaSorting =
+                (thn * 10000) + (bln * 100) + tgl;
+        }
+
+        nilaiTanggal[jumlahPasien] = angkaSorting;
+
+        jumlahPasien++;
+    }
+
+    file.close();
+
+    for (int i = 0; i < jumlahPasien - 1; i++) {
+
+        for (int j = 0; j < jumlahPasien - i - 1; j++) {
+
+            if (nilaiTanggal[j] > nilaiTanggal[j + 1]) {
+
+                swap(nilaiTanggal[j], nilaiTanggal[j + 1]);
+                swap(tglTeks[j], tglTeks[j + 1]);
+                swap(daftarPasien[j], daftarPasien[j + 1]);
+            }
+        }
+    }
+
+    cout << "\n======================================================" << endl;
+    cout << "        RIWAYAT PASIEN BERDASARKAN TANGGAL" << endl;
+    cout << "======================================================" << endl;
+
+    if (jumlahPasien == 0) {
+        cout << "Riwayat masih kosong." << endl;
+    }
+
+    for (int i = 0; i < jumlahPasien; i++) {
+
+        cout << "Tanggal Kunjungan : " << tglTeks[i] << endl;
+        cout << "No Tiket          : " << daftarPasien[i].noTiket << endl;
+        cout << "Nama Pasien       : " << daftarPasien[i].nama << endl;
+        cout << "No Telepon        : " << daftarPasien[i].nomorTelepon << endl;
+        cout << "Keluhan           : " << daftarPasien[i].keluhan << endl;
+        cout << "Usia              : " << daftarPasien[i].usia << " Tahun" << endl;
+
+        cout << "Jenis Kelamin     : "
+             << (daftarPasien[i].jenisKelamin == 'L'
+             ? "Laki-laki"
+             : "Perempuan")
+             << endl;
+
+        cout << "Status Pelayanan  : "
+             << (daftarPasien[i].sudahDilayani
+             ? "SUDAH DILAYANI"
+             : "BELUM DILAYANI")
+             << endl;
+
+        cout << "------------------------------------------------------" << endl;
+    }
+}
+
+
 void cariPasienDiFile(string tiketDicari) {
 
     ifstream file("DataPasien.txt");
