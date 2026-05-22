@@ -2,6 +2,25 @@
 #include <fstream>
 #include <string>
 
+struct Tanggal{
+    int tgl, bln, thn;
+};
+
+struct Pasien{
+    string nama, noTiket, nomorTelepon, keluhan;
+    int usia;
+    char jenisKelamin;
+    bool sudahDilayani;
+    Tanggal tglKunjungan;
+};
+
+struct Node{
+    Pasien info;
+    Node* next;
+    Node* prev;
+};
+
+int nomorAntrian = 1;
 
 void mengecheckAntrian() {
     ifstream file("DataPasien.txt");
