@@ -297,6 +297,94 @@ void cariPasienDiFile(string tiketDicari) {
              << " tidak ditemukan!" << endl;
     }
 }
+void tambahPasien(Node** awal, Node** akhir, Pasien databaru) {
+
+    Node* baru = new Node;
+
+    baru->info = databaru;
+    baru->next = nullptr;
+    baru->prev = nullptr;
+
+    if (*awal == nullptr) {
+        *awal = *akhir = baru;
+    }
+
+    else {
+        (*akhir)->next = baru;
+        baru->prev = *akhir;
+        *akhir = baru;
+    }
+}
+void hapusRiwayat() {
+
+    ifstream file("DataPasien.txt");
+    ofstream temp("temp.txt");
+
+    string tiketHapus;
+    string line;
+
+    bool ketemu = false;
+
+    cout << "Masukkan nomor tiket yang ingin dihapus : ";
+    getline(cin, tiketHapus);
+
+    while (getline(file, line)) {
+
+        if (line.find(tiketHapus + "#") == 0) {
+
+            ketemu = true;
+            continue;
+        }
+
+        temp << line << endl;
+    }
+
+    file.close();
+    temp.close();
+
+    remove("DataPasien.txt");
+    rename("temp.txt", "DataPasien.txt");
+
+    if (ketemu) {
+        cout << "\n[+] Data berhasil dihapus!" << endl;
+    }
+
+    else {
+        cout << "\n[!] Data tidak ditemukan!" << endl;
+    }
+}
+void simpanData(Pasien data) {
+
+    ofstream arsip;
+
+    arsip.open("DataPasien.txt", ios::app);
+
+    if (arsip.is_open()) {
+
+        arsip << data.noTiket << "#"
+              << data.nama << "#"
+              << data.nomorTelepon << "#"
+              << data.keluhan << "#"
+              << data.usia << "#"
+              << data.jenisKelamin << "#"
+              << data.sudahDilayani << "#"
+              << data.tglKunjungan.tgl << "-"
+              << data.tglKunjungan.bln << "-"
+              << data.tglKunjungan.thn << "#"
+              << endl;
+
+        arsip.close();
+
+        cout << "\n[+] Data pasien "
+             << data.nama
+             << " berhasil disimpan!"
+             << endl;
+    }
+
+    else {
+        cout << "\n[!] File database gagal dibuka!" << endl;
+    }
+}
 
 using namespace std;
 int main() {
